@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Головна{% endblock %}
+
+{% block content %}
+  <div class="banner">
+    <img src="{{ url_for('static', filename='images/banner1.png') }}" alt="Banner" class="banner-img">
+
+    <div class="banner-text-block">
+      <h1 class="banner-brand">VYSH</h1>
+      <p class="banner-subtitle">Вишуканість у кожній деталі — український бренд одягу</p>
+      <a href="/products" class="banner-btn">Перейти до колекції</a>
+    </div>
+  </div>
+
+  <section class="about-section">
+  <div class="container">
+    <h2 class="about-title">Про VYSH</h2>
+    <p class="about-text">
+      VYSH — це про речі, які не кричать. Вони говорять тихо, впевнено, через лінії, текстури й рух.
+      <br><br>
+      Ми створюємо одяг для тих, хто обирає тишу замість шуму, якість замість кількості, стиль — замість моди.
+      Натхненням стає архітектура, класична музика, світло, що лягає на мармур.
+      <br><br>
+      VYSH — для тих, хто не женеться. Вона вже там, де треба.
+    </p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <p class="footer-brand">VYSH</p>
+    <p class="footer-description">Одяг, що говорить через деталі.</p>
+
+    <div class="footer-links">
+      <a href="/about">Про нас</a>
+      <a href="/contact">Контакти</a>
+      <a href="/delivery">Доставка</a>
+      <a href="/terms">Умови</a>
+    </div>
+
+    <p class="footer-copy">© 2026 VYSH. All rights reserved.</p>
+  </div>
+</footer>
+
+{% endblock %}

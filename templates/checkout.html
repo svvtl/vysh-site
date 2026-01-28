@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Оформлення замовлення{% endblock %}
+
+{% block content %}
+<style>
+  .checkout-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .checkout-form {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .checkout-summary {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .grouped-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .primary-btn,
+  .installment-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .installment-btn {
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    color: #333;
+  }
+</style>
+
+<div class="checkout-page">
+  <h1>Оформлення замовлення</h1>
+
+  {% if cart_items %}
+  <div class="checkout-layout">
+
+    <!-- ЛІВА ЧАСТИНА -->
+    <form id="checkoutForm" class="checkout-form" method="post">
+      <h3>Контактні дані</h3>
+
+      <label>
+        Імʼя
+        <input type="text" name="name" required>
+      </label>
+
+      <label>
+        Телефон
+        <input type="tel" name="phone" required>
+      </label>
+
+      <label>
+        Email
+        <input type="email" name="email">
+      </label>
+
+      <label>
+        Адреса доставки
+        <textarea name="address" rows="3" required></textarea>
+      </label>
+
+      <div class="grouped-buttons">
+        <button type="submit" class="primary-btn">Підтвердити замовлення</button>
+        <button type="button" id="monoInstallmentBtn" class="installment-btn">Покупка частинами</button>
+      </div>
+    </form>
+
+    <!-- ПРАВА ЧАСТИНА -->
+    <div class="checkout-summary">
+      <h3>Ваше замовлення</h3>
+      <div class="order-number">
+        Номер замовлення: <strong>{{ store_order_id }}</strong>
+      </div>
+      {% for row in cart_items %}
+      <div class="checkout-item">
+        <span>{{ row.item.name }} × {{ row.qty }}</span>
+        <span>{{ row.total }} ₴</span>
+      </div>
+      {% endfor %}
+      <div class="checkout-total">
+        Разом: <strong>{{ total }} ₴</strong>
+      </div>
+    </div>
+
+  </div>
+  {% else %}
+  <p>Кошик порожній</p>
+  <a href="/products">← До каталогу</a>
+  {% endif %}
+</div>
+
+<!-- ✅ JS СКРИПТ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const installmentBtn = document.getElementById('monoInstallmentBtn');
+
+    if (!installmentBtn) {
+      console.log('❌ Кнопка не знайдена');
+      return;
+    }
+
+    installmentBtn.addEventListener('click', async function (e) {
+      e.preventDefault(); // ⛔ Забороняємо сабміт форми
+
+      console.log('📦 MONO CLICK');
+
+      const phoneInput = document.querySelector('input[name="phone"]');
+      const phone = phoneInput ? phoneInput.value.trim() : '';
+
+      if (!phone) {
+        alert('Введіть номер телефону');
+        return;
+      }
+
+      try {
+        const res = await fetch('/pay-parts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone })
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          window.location.href = '/order-success';
+        } else {
+          alert(data.message || 'Помилка оплати частинами');
+        }
+
+      } catch (err) {
+        alert('Помилка з’єднання з сервером');
+        console.error(err);
+      }
+    });
+  });
+</script>
+{% endblock %}

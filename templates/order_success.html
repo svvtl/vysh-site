@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Дякуємо за замовлення!{% endblock %}
+
+{% block content %}
+<div class="order-success-page">
+
+  <div class="thank-you-box">
+    <h1>Дякуємо за ваше замовлення!</h1>
+
+    {% if store_order_id %}
+      <p class="order-id">
+        <strong>Номер замовлення:</strong>
+        <span class="order-code">{{ store_order_id }}</span>
+      </p>
+    {% endif %}
+
+    <p class="subtitle">
+      Ми вже працюємо над тим, щоб якнайшвидше передати ваше замовлення в доставку.
+    </p>
+    <p class="subtitle">
+      Підтвердження і чек було надіслано на вашу електронну пошту.
+    </p>
+
+    <p class="brand-message">
+      Дякуємо, що обрали <strong>VYSH</strong> — бренд, створений з любов’ю до стилю та індивідуальності.
+    </p>
+
+    <a href="{{ url_for('home') }}" class="primary-btn">Повернутись на головну</a>
+  </div>
+
+</div>
+{% endblock %}

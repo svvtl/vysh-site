@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Кошик{% endblock %}
+
+{% block content %}
+<h1>Кошик</h1>
+
+{% if cart_items %}
+  <div class="cart-list">
+    {% for row in cart_items %}
+      <div class="cart-item">
+        <img
+          src="{{ url_for('static', filename='images/' + row.item.image) }}"
+          alt="{{ row.item.name }}"
+          width="80"
+        >
+
+        <div class="cart-info">
+          <p class="cart-name">{{ row.item.name }}</p>
+          <p class="cart-qty">
+            {{ row.qty }} × {{ row.item.price }} ₴
+          </p>
+        </div>
+
+        <div class="cart-actions">
+  <div class="cart-total">
+    {{ row.total }} ₴
+  </div>
+
+  <form
+    action="{{ url_for('remove_from_cart', item_id=row.item.id) }}"
+    method="post"
+  >
+    <button type="submit" class="cart-remove">
+      Видалити
+    </button>
+  </form>
+</div>
+      </div>
+    {% endfor %}
+  </div>
+
+ <hr>
+
+<div class="cart-summary">
+  <p class="cart-sum">
+    Разом: <strong>{{ total }} ₴</strong>
+  </p>
+
+  <a href="/checkout" class="checkout-btn">
+    Оформити замовлення
+  </a>
+
+  <a href="/products" class="cart-back">
+    ← Продовжити покупки
+  </a>
+</div>
+
+{% else %}
+  <p>Кошик порожній</p>
+  <a href="/products">← До каталогу</a>
+{% endif %}
+{% endblock %}

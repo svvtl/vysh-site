@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <meta charset="UTF-8">
+  <title>{% block title %}Мій магазин{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block styles %}{% endblock %}
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <a href="/">
+        <img src="{{ url_for('static', filename='images/vyshlogo1.png') }}" alt="VYSH">
+      </a>
+    </div>
+
+    <form class="search-form" action="/search" method="get">
+      <input type="text" class="search-input" name="query" placeholder="Пошук">
+      <button type="submit" class="search-button">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+        </svg>
+      </button>
+    </form>
+
+
+    <nav>
+      <a href="/products">Каталог</a>
+      <a href="/contact">Контакти</a>
+      <a href="/cart" class="cart-icon" aria-label="Корзина">
+        🛒
+        {% if cart_count > 0 %}
+          <span class="cart-badge">{{ cart_count }}</span>
+        {% endif %}
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- === CART DRAWER === -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+      <h3>Кошик</h3>
+      <button class="cart-drawer-close" id="closeCartDrawer">×</button>
+    </div>
+
+    <div class="cart-drawer-content" id="cartDrawerContent">
+      <!-- JS вставляє товари -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="cart-drawer-total" id="cartDrawerTotal">
+        Разом: 0 ₴
+      </div>
+
+      <a href="/checkout" class="checkout-btn">
+        Оформити замовлення
+      </a>
+
+      <button class="cart-continue-btn" id="continueShopping">
+        ← Продовжити покупки
+      </button>
+    </div>
+  </div>
+
+  <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
+
+  <!-- ==== SCRIPT ==== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const drawer = document.getElementById('cartDrawer');
+      const overlay = document.getElementById('cartDrawerOverlay');
+      const content = document.getElementById('cartDrawerContent');
+      const totalEl = document.getElementById('cartDrawerTotal');
+
+      function openCartDrawer() {
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+      }
+
+      function closeCartDrawer() {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+      }
+
+      const closeBtn = document.getElementById('closeCartDrawer');
+      const continueBtn = document.getElementById('continueShopping');
+
+      if (closeBtn) closeBtn.onclick = closeCartDrawer;
+      if (continueBtn) continueBtn.onclick = closeCartDrawer;
+      if (overlay) overlay.onclick = closeCartDrawer;
+
+      async function updateCartDrawer() {
+        const res = await fetch('/cart-preview');
+        const data = await res.json();
+
+        content.innerHTML = '';
+
+        if (data.items.length === 0) {
+          closeCartDrawer();
+          totalEl.innerText = 'Разом: 0 ₴';
+          return;
+        }
+
+        data.items.forEach(item => {
+          content.innerHTML += `
+            <div class="cart-drawer-item">
+              <img src="/static/images/${item.image}" alt="${item.name}">
+
+              <div class="cart-drawer-item-info">
+                <div class="cart-drawer-item-header">
+                  <span class="cart-drawer-item-name">${item.name}</span>
+                  <button class="cart-drawer-remove" onclick="removeItem(${item.id})" aria-label="Видалити товар">×</button>
+                </div>
+
+                <div class="cart-drawer-controls">
+                  <div class="cart-drawer-qty">
+                    <button onclick="decreaseItem(${item.id})">−</button>
+                    <span>${item.qty}</span>
+                    <button onclick="increaseItem(${item.id})">+</button>
+                  </div>
+
+                  <div class="cart-drawer-item-price">
+                    ${item.price * item.qty} ₴
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        totalEl.innerText = `Разом: ${data.total} ₴`;
+      }
+
+      const addButtons = document.querySelectorAll('.add-to-cart-btn');
+      addButtons.forEach(btn => {
+        btn.addEventListener('click', async function (e) {
+          e.preventDefault();
+          const id = this.dataset.id;
+          await fetch(`/add-to-cart/${id}`, { method: 'POST' });
+          await updateCartDrawer();
+          openCartDrawer();
+
+          const originalText = this.textContent;
+          this.classList.add('added');
+          this.textContent = '✅ Додано!';
+          this.disabled = true;
+
+          setTimeout(() => {
+            this.textContent = originalText;
+            this.classList.remove('added');
+            this.disabled = false;
+          }, 1500);
+        });
+      });
+
+      window.increaseItem = async function (id) {
+        await fetch(`/cart/increase/${id}`, { method: 'POST' });
+        await updateCartDrawer();
+      }
+
+      window.decreaseItem = async function (id) {
+        await fetch(`/cart/decrease/${id}`, { method: 'POST' });
+        await updateCartDrawer();
+      }
+
+      window.removeItem = async function (id) {
+        await fetch(`/cart/remove/${id}`, { method: 'POST' });
+        await updateCartDrawer();
+      }
+
+      updateCartDrawer();
+    });
+  </script>
+</body>
+</html>
