@@ -1,46 +1,221 @@
 {% extends "base.html" %}
 
-{% block title %}Головна{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
 
 {% block content %}
-  <div class="banner">
-    <img src="{{ url_for('static', filename='images/banner1.png') }}" alt="Banner" class="banner-img">
 
-    <div class="banner-text-block">
-      <h1 class="banner-brand">VYSH</h1>
-      <p class="banner-subtitle">Вишуканість у кожній деталі — український бренд одягу</p>
-      <a href="/products" class="banner-btn">Перейти до колекції</a>
-    </div>
-  </div>
+<!-- HERO -->
+<section class="hero">
+  <img src="{{ url_for('static', filename='images/bannerprod.png') }}" class="hero-img">
 
-  <section class="about-section">
-  <div class="container">
-    <h2 class="about-title">Про VYSH</h2>
-    <p class="about-text">
-      VYSH — це про речі, які не кричать. Вони говорять тихо, впевнено, через лінії, текстури й рух.
-      <br><br>
-      Ми створюємо одяг для тих, хто обирає тишу замість шуму, якість замість кількості, стиль — замість моди.
-      Натхненням стає архітектура, класична музика, світло, що лягає на мармур.
-      <br><br>
-      VYSH — для тих, хто не женеться. Вона вже там, де треба.
-    </p>
+  <div class="hero-content">
+    <span class="hero-eyebrow">ТИХА РОЗКІШ</span>
+    <h1 class="hero-title">
+      VYSH — одяг,<br>
+      що говорить через деталі
+    </h1>
+    <a href="/products" class="hero-btn">Перейти до колекції</a>
   </div>
 </section>
 
-<footer class="site-footer">
-  <div class="footer-container">
-    <p class="footer-brand">VYSH</p>
-    <p class="footer-description">Одяг, що говорить через деталі.</p>
+<!-- TOP SALES -->
+<section class="home-products">
+  <h2 class="section-title">Топ продаж</h2>
 
-    <div class="footer-links">
-      <a href="/about">Про нас</a>
-      <a href="/contact">Контакти</a>
-      <a href="/delivery">Доставка</a>
-      <a href="/terms">Умови</a>
+  <div class="products-grid">
+    {% for item in top_sales %}
+    <div class="product-card">
+
+      <!-- КВАДРАТНЫЙ ВЕРХ КАРТОЧКИ -->
+      <div class="product-image">
+          <!-- ИЗБРАННОЕ -->
+  <button
+    class="fav-btn {% if item.id in session.get('favorites', []) %}active{% endif %}"
+    data-id="{{ item.id }}"
+    aria-label="Додати в обране">
+    <svg class="fav-icon" viewBox="0 0 24 24">
+      <path d="M12 21s-7-4.35-10-9.28C-0.5 7.5 2.4 3 6.7 3c2.2 0 3.9 1.2 5.3 2.8C13.4 4.2 15.1 3 17.3 3 21.6 3 24.5 7.5 22 11.72 19 16.65 12 21 12 21z"/>
+    </svg>
+  </button>
+        <img
+          src="{{ url_for('static', filename='images/' + item.image) }}"
+          alt="{{ item.name }}"
+        >
+      </div>
+
+      <!-- НИЗ КАРТОЧКИ -->
+<div class="product-meta">
+  <p class="product-title">{{ item.name }}</p>
+  <p class="product-price">{{ item.price }} ₴</p>
+
+  {% if item.sizes_all %}
+    <div class="product-sizes">
+      {% for size in item.sizes_all %}
+        <span class="size {% if size not in item.sizes_in_stock %}out-of-stock{% endif %}">
+          {{ size }}
+        </span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <button class="product-btn">Переглянути</button>
+</div>
+
+
+    </div>
+    {% endfor %}
+  </div>
+    <div class="section-cta">
+    <a href="/products?filter=top" class="section-btn">
+      Усі топ продажі
+    </a>
+  </div>
+
+</section>
+
+<!-- SALE / OUTLET -->
+<section class="home-products alt">
+  <h2 class="section-title section-title--outlet">Акції</h2>
+
+  <div class="products-grid">
+    {% for item in sale_items %}
+    <div class="product-card">
+<span class="product-badge">-10%</span>
+
+      <!-- КВАДРАТНЫЙ ВЕРХ КАРТОЧКИ -->
+      <div class="product-image">
+          <button
+    class="fav-btn {% if item.id in session.get('favorites', []) %}active{% endif %}"
+    data-id="{{ item.id }}"
+    aria-label="Додати в обране">
+    <svg class="fav-icon" viewBox="0 0 24 24">
+      <path d="M12 21s-7-4.35-10-9.28C-0.5 7.5 2.4 3 6.7 3c2.2 0 3.9 1.2 5.3 2.8C13.4 4.2 15.1 3 17.3 3 21.6 3 24.5 7.5 22 11.72 19 16.65 12 21 12 21z"/>
+    </svg>
+  </button>
+        <img
+          src="{{ url_for('static', filename='images/' + item.image) }}"
+          alt="{{ item.name }}"
+        >
+      </div>
+
+      <!-- НИЗ КАРТОЧКИ -->
+      <div class="product-meta">
+        <p class="product-title">{{ item.name }}</p>
+
+        <p class="product-price">
+      <span class="price-old">
+        {{ item.price }} ₴
+      </span>
+
+          <br>
+        <span class="price-new">
+          {{ (item.price * 0.9)|int }} ₴
+        </span>
+  {% if item.sizes_all %}
+    <div class="product-sizes">
+      {% for size in item.sizes_all %}
+        <span class="size {% if size not in item.sizes_in_stock %}out-of-stock{% endif %}">
+          {{ size }}
+        </span>
+      {% endfor %}
+    </div>
+  {% endif %}
+        </p>
+
+        <button class="product-btn">Переглянути</button>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+    <div class="section-cta">
+    <a href="/products?filter=sale" class="section-btn section-btn--outline">
+      Усі акції
+    </a>
+  </div>
+
+
+<!-- BENEFITS -->
+<section class="benefits-section">
+  <div class="benefits-grid">
+
+    <div class="benefit-card">
+      <i class="ph ph-truck"></i>
+      <h3>Швидка доставка</h3>
+      <p>Відправимо замовлення вже наступного робочого дня</p>
     </div>
 
-    <p class="footer-copy">© 2026 VYSH. All rights reserved.</p>
+    <div class="benefit-card">
+      <i class="ph ph-seal-check"></i>
+      <h3>Перевірена якість</h3>
+      <p>Контроль якості перед кожною відправкою</p>
+    </div>
+
+    <div class="benefit-card">
+      <i class="ph ph-credit-card"></i>
+      <h3>Покупка частинами</h3>
+      <p>До 10 платежів без комісії</p>
+    </div>
+
+    <div class="benefit-card">
+      <i class="ph ph-arrows-counter-clockwise"></i>
+      <h3>Обмін та повернення</h3>
+      <p>Згідно закону України про захист прав споживачів</p>
+    </div>
+
   </div>
-</footer>
+</section>
+
+<!-- BRAND / OFFER -->
+<section class="brand-section">
+  <div class="brand-inner">
+
+    <div class="brand-content">
+      <span class="brand-eyebrow">про бренд</span>
+
+<h2 class="section-title section-title--left">
+  VYSH — тиха розкіш,<br>
+  що формує <span class="brand-accent">образ</span>
+</h2>
+
+
+      <p class="brand-text">
+        VYSH створений для тих, хто не слідує трендам,
+        а формує власний стиль.
+        Наші речі легко поєднуються між собою,
+        допомагаючи зібрати цілісний образ
+        для щоденного ритму життя.
+      </p>
+
+      <p class="brand-text muted">
+        Ми працюємо з формою, посадкою та фактурою,
+        залишаючи простір для вашого характеру,
+        а не навʼязуючи готові рішення.
+      </p>
+
+      <ul class="brand-values">
+        <li>продумані силуети та посадка</li>
+        <li>стримана палітра і тактильні матеріали</li>
+        <li>обмежені колекції без перевиробництва</li>
+      </ul>
+
+      <!-- CTA — ТА ЖЕ КНОПКА, ЧТО И ВЕЗДЕ -->
+      <a href="/create-look" class="section-btn">
+        Створити свій образ
+      </a>
+    </div>
+
+    <div class="brand-image">
+      <img
+        src="{{ url_for('static', filename='images/brand-store.jpg') }}"
+        alt="Простір та атмосфера VYSH"
+      >
+    </div>
+
+  </div>
+</section>
+
 
 {% endblock %}

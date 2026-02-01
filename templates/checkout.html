@@ -1,152 +1,123 @@
 {% extends "base.html" %}
-
 {% block title %}Оформлення замовлення{% endblock %}
-
 {% block content %}
-<style>
-  .checkout-layout {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .checkout-form {
-    flex: 1;
-    min-width: 300px;
-  }
-
-  .checkout-summary {
-    flex: 1;
-    min-width: 300px;
-  }
-
-  .grouped-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-
-  .primary-btn,
-  .installment-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-
-  .installment-btn {
-    background-color: #f3f3f3;
-    border: 1px solid #ccc;
-    color: #333;
-  }
-</style>
 
 <div class="checkout-page">
-  <h1>Оформлення замовлення</h1>
+
+  <h1 class="checkout-title">Оформлення замовлення</h1>
 
   {% if cart_items %}
   <div class="checkout-layout">
 
-    <!-- ЛІВА ЧАСТИНА -->
-    <form id="checkoutForm" class="checkout-form" method="post">
-      <h3>Контактні дані</h3>
+    <!-- LEFT -->
+    <form id="checkoutForm" class="checkout-left" method="post">
 
-      <label>
-        Імʼя
-        <input type="text" name="name" required>
-      </label>
+      <!-- STEP 1 -->
+      <div class="checkout-step">
+        <div class="step-header">
+          <span class="step-number active">1</span>
+          <h3>Контактні дані</h3>
+        </div>
 
-      <label>
-        Телефон
-        <input type="tel" name="phone" required>
-      </label>
+        <div class="form-group">
+          <label>Імʼя</label>
+          <input type="text" name="name" required>
+        </div>
 
-      <label>
-        Email
-        <input type="email" name="email">
-      </label>
+        <div class="form-group">
+          <label>Телефон</label>
+          <input type="tel" name="phone" required>
+        </div>
 
-      <label>
-        Адреса доставки
-        <textarea name="address" rows="3" required></textarea>
-      </label>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email">
+        </div>
+      </div>
 
-      <div class="grouped-buttons">
-        <button type="submit" class="primary-btn">Підтвердити замовлення</button>
-        <button type="button" id="monoInstallmentBtn" class="installment-btn">Покупка частинами</button>
+      <!-- STEP 2 -->
+      <div class="checkout-step">
+        <div class="step-header">
+          <span class="step-number">2</span>
+          <h3>Доставка</h3>
+        </div>
+
+        <div class="form-group">
+          <label>Адреса доставки</label>
+          <textarea name="address" rows="3" required></textarea>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="checkout-step">
+        <div class="step-header">
+          <span class="step-number">3</span>
+          <h3>Оплата</h3>
+        </div>
+
+        <div class="payment-actions">
+          <button type="submit" class="mono-btn">
+            plata by mono
+          </button>
+
+          <button type="button" id="monoInstallmentBtn" class="installment-btn">
+            Покупка частинами
+          </button>
+        </div>
+
+        <!-- PARTS -->
+        <div id="partsSelectWrapper" class="parts-wrapper" style="display:none;">
+          <div class="form-group">
+            <label>Кількість платежів</label>
+            <select name="parts_count" id="partsCountSelect" required>
+              <option value="3">3 платежі</option>
+              <option value="6">6 платежів</option>
+              <option value="10">10 платежів</option>
+            </select>
+          </div>
+
+          <button type="button" id="confirmPartsBtn" class="installment-btn">
+            Підтвердити оплату
+          </button>
+        </div>
+
+        <div id="installment-error" class="checkout-error" style="display:none;"></div>
+
       </div>
     </form>
 
-    <!-- ПРАВА ЧАСТИНА -->
-    <div class="checkout-summary">
-      <h3>Ваше замовлення</h3>
-      <div class="order-number">
-        Номер замовлення: <strong>{{ store_order_id }}</strong>
-      </div>
-      {% for row in cart_items %}
-      <div class="checkout-item">
-        <span>{{ row.item.name }} × {{ row.qty }}</span>
-        <span>{{ row.total }} ₴</span>
-      </div>
-      {% endfor %}
-      <div class="checkout-total">
-        Разом: <strong>{{ total }} ₴</strong>
+    <!-- RIGHT -->
+    <div class="checkout-right">
+      <div class="order-summary">
+        <h3>Ваше замовлення</h3>
+
+        <div class="order-number">
+          Номер замовлення: <strong>{{ store_order_id }}</strong>
+        </div>
+
+        {% for row in cart_items %}
+        <div class="summary-item">
+          <span>{{ row.item.name }} × {{ row.qty }}</span>
+          <span>{{ row.total }} ₴</span>
+        </div>
+        {% endfor %}
+
+        <div class="summary-total">
+          <span>Разом</span>
+          <span>{{ total }} ₴</span>
+        </div>
       </div>
     </div>
 
   </div>
   {% else %}
-  <p>Кошик порожній</p>
-  <a href="/products">← До каталогу</a>
+    <p>Кошик порожній</p>
+    <a href="/products">← До каталогу</a>
   {% endif %}
 </div>
 
-<!-- ✅ JS СКРИПТ -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const installmentBtn = document.getElementById('monoInstallmentBtn');
+<!-- JS ТВОЙ — БЕЗ ЗМІН -->
+{{ super() }}
 
-    if (!installmentBtn) {
-      console.log('❌ Кнопка не знайдена');
-      return;
-    }
-
-    installmentBtn.addEventListener('click', async function (e) {
-      e.preventDefault(); // ⛔ Забороняємо сабміт форми
-
-      console.log('📦 MONO CLICK');
-
-      const phoneInput = document.querySelector('input[name="phone"]');
-      const phone = phoneInput ? phoneInput.value.trim() : '';
-
-      if (!phone) {
-        alert('Введіть номер телефону');
-        return;
-      }
-
-      try {
-        const res = await fetch('/pay-parts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ phone })
-        });
-
-        const data = await res.json();
-
-        if (data.status === 'success') {
-          window.location.href = '/order-success';
-        } else {
-          alert(data.message || 'Помилка оплати частинами');
-        }
-
-      } catch (err) {
-        alert('Помилка з’єднання з сервером');
-        console.error(err);
-      }
-    });
-  });
-</script>
 {% endblock %}
+

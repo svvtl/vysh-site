@@ -1,0 +1,481 @@
+/* HERO */
+.hero {
+  position: relative;
+  height: 600px;
+  margin-bottom: 20px;
+}
+
+
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(to left, rgba(0,0,0,.45), transparent);
+}
+
+.hero-content {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 42px;
+  margin-bottom: 32px;
+}
+
+.hero-btn {
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  padding: 14px 36px;
+}
+
+/* PRODUCTS */
+.home-products {
+  padding-top: 16px;   /* было больше */
+  padding-bottom: 80px;
+}
+
+
+
+.home-products.alt {
+  background: #f3f1ec;
+}
+
+.section-title {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 500;
+  margin-bottom: 32px;
+  letter-spacing: 0.04em;
+}
+
+.section-title::before {
+  content: "TOP";
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--accent-gold);
+  margin-bottom: 6px;
+}
+
+
+/* GRID */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+
+  max-width: 1200px;
+  margin: 0 auto;
+
+  justify-content: start;
+
+}
+
+
+
+/* CARD */
+.product-card {
+  position: relative;
+  background: transparent;
+  box-shadow: none;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+
+
+.product-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  flex: 1;              /* растягиваем meta до низа карточки */
+  padding-top: 10px;    /* чтобы текст не лип к картинке */
+}
+
+
+
+.product-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.product-price {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+
+
+/* PRODUCT CARD BUTTON — SECONDARY */
+.product-btn {
+  display: inline-block;
+  width: 100%;
+  margin-top: auto;
+  padding: 12px 0;
+  border: 1px solid var(--accent-gold);
+  background: transparent;
+  color: var(--accent-gold);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: all .25s ease;
+}
+
+.product-btn:hover {
+  background: var(--accent-gold);
+  color: #1d1d1d;
+}
+
+
+
+/* BADGE */
+.product-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+
+  background: rgba(198, 163, 106, 0.95); /* accent gold */
+  color: #1d1d1d;
+
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  padding: 6px 10px;
+  border-radius: 2px;
+}
+
+
+.product-card img {
+  transition: transform .35s ease;
+}
+
+.product-image:hover img {
+  transform: scale(1.06);
+}
+
+
+.section-title--outlet::before {
+  content: "OUTLET";
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--accent-gold);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.product-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* бенефиты */
+
+/* BENEFITS */
+.benefits-section {
+  padding: 96px 0;
+  background: #e6ddd3; /* тёплый тёмный беж под old money */
+  margin-top: 72px;
+}
+
+
+.benefits-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.benefit-card {
+  text-align: center;
+}
+
+.benefit-card i {
+  font-size: 34px;
+  color: var(--accent-gold);
+  margin-bottom: 14px;
+}
+
+.benefit-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.benefit-card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+
+/* SECTION CTA */
+.section-cta {
+  margin-top: 48px;
+  text-align: center;
+}
+
+/* MAIN SECTION CTA */
+.section-btn {
+  display: inline-block;
+  padding: 16px 56px;
+  background: var(--accent-gold);
+  color: #1d1d1d;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: none;
+  transition: all .3s ease;
+}
+
+.section-btn:hover {
+  background: var(--accent-gold-hover);
+}
+.product-card:hover {
+  transform: translateY(-4px);
+}
+
+.price-old {
+  font-size: 13px;
+  color: #9a9a9a;
+  text-decoration: line-through;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.price-new {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-main); /* ← обычный цвет текста */
+}
+.product-image {
+  position: relative;
+}
+
+.product-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 3;
+}
+
+/* FAVORITES */
+.fav-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+
+  cursor: pointer;
+  padding: 0;
+
+  transition: all .25s ease;
+}
+
+.fav-btn:hover {
+  border-color: var(--accent-gold);
+}
+
+.fav-icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--accent-gold);
+  stroke-width: 1.5;
+  transition: all .25s ease;
+}
+
+.fav-btn.active .fav-icon {
+  fill: var(--accent-gold);
+}
+
+.product-sizes {
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+/* =========================
+   BRAND SECTION (FINAL)
+   ========================= */
+
+.brand-section {
+  padding: 180px 0;
+}
+
+.brand-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 72px;
+
+  align-items: start;
+}
+
+/* TEXT */
+.brand-content {
+  position: relative;
+  padding-left: 24px;
+  max-width: 560px;
+}
+
+.brand-content::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 2px;
+  height: 48px;
+  background: var(--accent-gold);
+}
+
+.brand-eyebrow {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 12px;
+}
+
+.brand-section .section-title::before {
+  content: none;
+}
+
+.brand-text {
+  font-size: 15px;
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+.brand-text.muted {
+  color: var(--text-muted);
+}
+
+.brand-values {
+  list-style: none;
+  padding: 0;
+  margin: 22px 0 36px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.brand-values li {
+  margin-bottom: 6px;
+  padding-left: 14px;
+  position: relative;
+}
+
+.brand-values li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--accent-gold);
+}
+
+/* IMAGE */
+.brand-image {
+  margin-top: 48px;
+  height: 460px;              /* ⬅️ КЛЮЧ */
+  background: #faf9f7;
+  padding: 14px;
+  border: 1px solid #e6e4e1;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.06);
+}
+
+
+.brand-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%; /* ⬅️ КЛЮЧ */
+  display: block;
+}
+/* =========================
+   BRAND INTRO (TRANSITION)
+   ========================= */
+
+.brand-intro {
+  max-width: 1200px;
+  margin: 96px auto 24px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.brand-intro::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 2px;
+  height: 32px;
+  background: var(--accent-gold);
+}
+
+.brand-intro-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 10px;
+}
+
+.brand-intro-text {
+  max-width: 420px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}

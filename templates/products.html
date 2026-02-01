@@ -1,37 +1,56 @@
 {% extends "base.html" %}
+
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='catalog.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}">
 {% endblock %}
+
 {% block title %}Каталог{% endblock %}
 
 {% block content %}
 
-<div class="product-grid">
-  {% for item in items %}
-    <div class="product-item">
+<div class="catalog-page">
 
-      <div class="image-wrapper">
-        <a href="/product/{{ item.id }}">
-          <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.name }}">
+  <div class="products-section">
+    <div class="products-grid">
+
+      {% for item in items %}
+      <div class="product-card">
+
+        <a href="/product/{{ item.id }}" class="product-image">
+          <img
+            src="{{ url_for('static', filename='images/' + item.image) }}"
+            alt="{{ item.name }}"
+          >
         </a>
-        <button class="fav-icon"></button>
+
+        <div class="product-meta">
+          <p class="product-title">{{ item.name }}</p>
+          <p class="product-price">{{ item.price }} ₴</p>
+{% if item.sizes_all %}
+  <div class="product-sizes">
+    {% for size in item.sizes_all %}
+      {% set available = size in item.sizes_in_stock %}
+      <span class="size {{ 'out-of-stock' if not available }}">
+        {{ size }}
+      </span>
+    {% endfor %}
+  </div>
+{% endif %}
+
+          <button
+            class="product-btn"
+            data-id="{{ item.id }}"
+          >
+            До кошика
+          </button>
+        </div>
+
       </div>
+      {% endfor %}
 
-      <div class="product-info">
-  <p class="product-name">{{ item.name }}</p>
-  <p class="product-price">{{ item.price }} ₴</p>
-
-  <button
-  class="add-to-cart-btn"
-  data-id="{{ item.id }}"
-  type="button"
->
-  до кошика
-</button>
-</form>
-</div>
     </div>
-  {% endfor %}
+  </div>
+
 </div>
 
 {% endblock %}

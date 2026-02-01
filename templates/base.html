@@ -1,183 +1,252 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
   <meta charset="UTF-8">
-  <title>{% block title %}Мій магазин{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  {% block styles %}{% endblock %}
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <title>{% block title %}VYSH{% endblock %}</title>
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Swiper styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+{% block styles %}{% endblock %}
+
 
 </head>
+<script>
+document.querySelectorAll('.fav-btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+
+    const id = btn.dataset.id;
+
+    fetch(`/toggle-favorite/${id}`, { method: 'POST' })
+      .then(res => res.json())
+      .then(data => {
+        btn.classList.toggle('active', data.active);
+      });
+  });
+});
+</script>
+
 <body>
 
-  <header>
-    <div class="logo">
-      <a href="/">
-        <img src="{{ url_for('static', filename='images/vyshlogo1.png') }}" alt="VYSH">
-      </a>
-    </div>
+<header class="site-header">
+  <div class="header-inner">
+
+    <a href="/" class="logo logo-with-phone">
+      <img src="{{ url_for('static', filename='images/vyshlogo1.png') }}" alt="VYSH">
+      <span class="logo-phone">0 800 300 325</span>
+    </a>
 
     <form class="search-form" action="/search" method="get">
-      <input type="text" class="search-input" name="query" placeholder="Пошук">
-      <button type="submit" class="search-button">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
-        </svg>
+      <input type="text" name="query" placeholder="Пошук">
+      <button type="submit">
+        <i class="ph ph-magnifying-glass"></i>
       </button>
     </form>
 
+<nav class="main-nav">
 
-    <nav>
-      <a href="/products">Каталог</a>
+  <a href="/products">Каталог</a>
+
+ <!-- 🌍 ЯЗЫК -->
+<div class="locale-item">
+  <button class="locale-trigger">UA</button>
+  <div class="locale-menu">
+    <button>UA</button>
+    <button>EN</button>
+  </div>
+</div>
+
+<!-- 💱 ВАЛЮТА -->
+<div class="locale-item">
+  <button class="locale-trigger">₴</button>
+  <div class="locale-menu">
+    <button>₴</button>
+    <button>€</button>
+    <button>$</button>
+  </div>
+</div>
+
+
+  <a href="/cart" class="cart-link">
+    <i class="ph ph-handbag"></i>
+    {% if cart_count > 0 %}
+      <span class="cart-badge">{{ cart_count }}</span>
+    {% endif %}
+  </a>
+
+  <a href="/favorites" class="header-fav" aria-label="Обране">
+    <svg class="header-fav-icon" viewBox="0 0 24 24">
+      <path d="M12 21s-7-4.35-10-9.28C-0.5 7.5 2.4 3 6.7 3c2.2 0 3.9 1.2 5.3 2.8C13.4 4.2 15.1 3 17.3 3 21.6 3 24.5 7.5 22 11.72 19 16.65 12 21 12 21z"/>
+    </svg>
+
+    {% if session.get('favorites') %}
+      <span class="header-fav-count">
+        {{ session.get('favorites')|length }}
+      </span>
+    {% endif %}
+  </a>
+
+</nav>
+
+  </div>
+</header>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <!-- BRAND -->
+    <div class="footer-col footer-brand">
+      <strong class="footer-logo">VYSH</strong>
+      <p class="footer-tagline">
+        Одяг, що говорить через деталі.
+      </p>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="footer-col">
+      <h4 class="footer-title">Навігація</h4>
+      <a href="/about">Про бренд</a>
+      <a href="/catalog">Каталог</a>
+      <a href="/sale">Акції</a>
       <a href="/contact">Контакти</a>
-      <a href="/cart" class="cart-icon" aria-label="Корзина">
-        🛒
-        {% if cart_count > 0 %}
-          <span class="cart-badge">{{ cart_count }}</span>
-        {% endif %}
-      </a>
-    </nav>
-  </header>
-
-  <main>
-    {% block content %}{% endblock %}
-  </main>
-
-  <!-- === CART DRAWER === -->
-  <div class="cart-drawer" id="cartDrawer">
-    <div class="cart-drawer-header">
-      <h3>Кошик</h3>
-      <button class="cart-drawer-close" id="closeCartDrawer">×</button>
+      <a href="/career">Карʼєра</a>
     </div>
 
-    <div class="cart-drawer-content" id="cartDrawerContent">
-      <!-- JS вставляє товари -->
+    <!-- LEGAL -->
+    <div class="footer-col">
+      <h4 class="footer-title">Правова інформація</h4>
+      <a href="/offer">Публічна оферта</a>
+      <a href="/privacy">Політика конфіденційності</a>
+      <a href="/terms">Умови використання</a>
+      <a href="/returns">Повернення та обмін</a>
     </div>
 
-    <div class="cart-drawer-footer">
-      <div class="cart-drawer-total" id="cartDrawerTotal">
-        Разом: 0 ₴
-      </div>
-
-      <a href="/checkout" class="checkout-btn">
-        Оформити замовлення
-      </a>
-
-      <button class="cart-continue-btn" id="continueShopping">
-        ← Продовжити покупки
-      </button>
+    <!-- CONTACTS -->
+    <div class="footer-col">
+      <h4 class="footer-title">Контакти</h4>
+      <p>0 800 300 325</p>
+      <p>support@vysh.ua</p>
+      <p class="footer-muted">Пн–Пт, 10:00–18:00</p>
     </div>
+
   </div>
 
-  <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
+  <!-- PAYMENTS -->
+  <div class="footer-payments">
+    <img src="{{ url_for('static', filename='images/payments/visa.svg') }}" alt="Visa">
+    <img src="{{ url_for('static', filename='images/payments/mastercard.svg') }}" alt="Mastercard">
+    <img src="{{ url_for('static', filename='images/payments/applepay.svg') }}" alt="Apple Pay">
+    <img src="{{ url_for('static', filename='images/payments/googlepay.svg') }}" alt="Google Pay">
+    <img src="{{ url_for('static', filename='images/payments/mono_installments.svg') }}" alt="Покупка частинами">
+  </div>
 
-  <!-- ==== SCRIPT ==== -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const drawer = document.getElementById('cartDrawer');
-      const overlay = document.getElementById('cartDrawerOverlay');
-      const content = document.getElementById('cartDrawerContent');
-      const totalEl = document.getElementById('cartDrawerTotal');
+  <div class="footer-copy">
+    © 2026 VYSH
+  </div>
+</footer>
 
-      function openCartDrawer() {
-        drawer.classList.add('open');
-        overlay.classList.add('open');
-      }
 
-      function closeCartDrawer() {
-        drawer.classList.remove('open');
-        overlay.classList.remove('open');
-      }
+<!-- Swiper script -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-      const closeBtn = document.getElementById('closeCartDrawer');
-      const continueBtn = document.getElementById('continueShopping');
+<script>
+  let userInteracted = false;
 
-      if (closeBtn) closeBtn.onclick = closeCartDrawer;
-      if (continueBtn) continueBtn.onclick = closeCartDrawer;
-      if (overlay) overlay.onclick = closeCartDrawer;
+  const heroSwiper = new Swiper(".heroSwiper", {
+    loop: true,
+    speed: 900,
 
-      async function updateCartDrawer() {
-        const res = await fetch('/cart-preview');
-        const data = await res.json();
+    autoplay: {
+      delay: 4500,
+      disableOnInteraction: false,
+    },
 
-        content.innerHTML = '';
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+  });
 
-        if (data.items.length === 0) {
-          closeCartDrawer();
-          totalEl.innerText = 'Разом: 0 ₴';
-          return;
-        }
+  heroSwiper.on('touchStart', () => {
+    if (!userInteracted) {
+      heroSwiper.autoplay.stop();
+      userInteracted = true;
+    }
+  });
 
-        data.items.forEach(item => {
-          content.innerHTML += `
-            <div class="cart-drawer-item">
-              <img src="/static/images/${item.image}" alt="${item.name}">
+  heroSwiper.on('click', () => {
+    if (!userInteracted) {
+      heroSwiper.autoplay.stop();
+      userInteracted = true;
+    }
+  });
+</script>
 
-              <div class="cart-drawer-item-info">
-                <div class="cart-drawer-item-header">
-                  <span class="cart-drawer-item-name">${item.name}</span>
-                  <button class="cart-drawer-remove" onclick="removeItem(${item.id})" aria-label="Видалити товар">×</button>
-                </div>
+<script>
+const benefitsSwiper = new Swiper(".benefitsSwiper", {
+  loop: false,
+  speed: 700,
+  autoplay: false,
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true,
+  },
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    320: {
+      slidesPerView: 1,
+      spaceBetween: 20,
+    },
+    768: {
+      slidesPerView: 2,
+      spaceBetween: 40,
+    },
+    1024: {
+      slidesPerView: 3,
+      spaceBetween: 60,
+    }
+  },
+});
 
-                <div class="cart-drawer-controls">
-                  <div class="cart-drawer-qty">
-                    <button onclick="decreaseItem(${item.id})">−</button>
-                    <span>${item.qty}</span>
-                    <button onclick="increaseItem(${item.id})">+</button>
-                  </div>
+</script>
 
-                  <div class="cart-drawer-item-price">
-                    ${item.price * item.qty} ₴
-                  </div>
-                </div>
-              </div>
-            </div>
-          `;
-        });
+<script>
+  document.querySelectorAll('.locale-trigger').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
 
-        totalEl.innerText = `Разом: ${data.total} ₴`;
-      }
+      const item = btn.closest('.locale-item');
 
-      const addButtons = document.querySelectorAll('.add-to-cart-btn');
-      addButtons.forEach(btn => {
-        btn.addEventListener('click', async function (e) {
-          e.preventDefault();
-          const id = this.dataset.id;
-          await fetch(`/add-to-cart/${id}`, { method: 'POST' });
-          await updateCartDrawer();
-          openCartDrawer();
+      document.querySelectorAll('.locale-item')
+        .forEach(i => i !== item && i.classList.remove('active'));
 
-          const originalText = this.textContent;
-          this.classList.add('added');
-          this.textContent = '✅ Додано!';
-          this.disabled = true;
-
-          setTimeout(() => {
-            this.textContent = originalText;
-            this.classList.remove('added');
-            this.disabled = false;
-          }, 1500);
-        });
-      });
-
-      window.increaseItem = async function (id) {
-        await fetch(`/cart/increase/${id}`, { method: 'POST' });
-        await updateCartDrawer();
-      }
-
-      window.decreaseItem = async function (id) {
-        await fetch(`/cart/decrease/${id}`, { method: 'POST' });
-        await updateCartDrawer();
-      }
-
-      window.removeItem = async function (id) {
-        await fetch(`/cart/remove/${id}`, { method: 'POST' });
-        await updateCartDrawer();
-      }
-
-      updateCartDrawer();
+      item.classList.toggle('active');
     });
-  </script>
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.locale-item')
+      .forEach(i => i.classList.remove('active'));
+  });
+</script>
+
+
 </body>
 </html>
